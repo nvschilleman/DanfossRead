@@ -12,7 +12,7 @@ import struct
 #
 
 
-ser = serial.Serial('/dev/danfoss', 9600, timeout=1, rtscts=False)
+ser = serial.Serial('/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0', 9600, timeout=15, rtscts=False)
 
 
 ser.bytesize = serial.EIGHTBITS #number of bits per bytes
@@ -21,8 +21,8 @@ ser.stopbits = serial.STOPBITS_ONE #number of stop bits
 ser.xonxoff = False    #disable software flow control
 ser.rtscts = False    #disable hardware (RTS/CTS) flow control
 ser.dsrdtr = False       #disable hardware (DSR/DTR) flow control
-ser.writeTimeout = 0.1 #timeout for write
-ser.readTimeout = 0.1
+ser.writeTimeout = 15.0 #timeout for write
+ser.readTimeout = 15.0
 
 print ser
 
@@ -61,38 +61,38 @@ def read_input_register(dev, reg):
     return ser.readline()
   
 def main():
-#    for reg in range(0,9999):
-#        #print 'Polling register: ' +  str(reg)
-#
-#        response = read_input_register(1, reg)
-#
-#        if response[1:2] == '\x83':
-#            a = 1
-#            #print '.',
-#        else:
-#            print 'Register: ' +  str(reg)
-#            print ":".join("{:02x}".format(ord(c)) for c in response)
+    for reg in range(0,9999):
+        print 'Polling register: ' +  str(reg)
+
+        response = read_input_register(1, reg)
+
+        if response[1:2] == '\x83':
+            a = 1
+            #print '.',
+        else:
+            print 'Register: ' +  str(reg)
+            print ":".join("{:02x}".format(ord(c)) for c in response)
 #
     #reg = [2010, 2002, 1999, 1504, 1020, 1010, 1006, 1000, 101, 100, 99]
 
-    reg = [2588, 2575, 2103, 2102, 2002, 1010, 102, 101, 100, 99]
-    dev = [1, 2]
-
-    for j in range(len(dev)):
-        print '==========================='
-        print 'Using device: ' + str(dev[j]) 
-        for i in range(len(reg)):
+  #  reg = [2588, 2575, 2103, 2102, 2002, 1010, 102, 101, 100, 99]
+  #  dev = [1]
+#
+ #   for j in range(len(dev)):
+ #       print '==========================='
+ #       print 'Using device: ' + str(dev[j]) 
+ #      for i in range(len(reg)):
             #print 'Polling register: ' +  str(reg)
 
-            response = read_input_register(dev[j], reg[i])
+  #          response = read_input_register(dev[j], reg[i])
 
-            if response[1:2] == '\x83':
-                a = 1
+   #         if response[1:2] == '\x83':
+    #            a = 1
                 #print '.',
-            else:
+    #        else:
                 #print 'Register: ' +  str(reg[i])
-                print ":".join("{:02x}".format(ord(c)) for c in response)
-                print '-'
+     #           print ":".join("{:02x}".format(ord(c)) for c in response)
+     #           print '-'
 
 
 if __name__ == '__main__':
