@@ -11,7 +11,7 @@ import struct
 import paho.mqtt.client as mqtt
 
 
-ser = serial.Serial('/dev/danfoss', 9600, timeout=1, rtscts=False)
+ser = serial.Serial('/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0', 9600, timeout=1, rtscts=False)
 
 ser.bytesize = serial.EIGHTBITS #number of bits per bytes
 ser.parity = serial.PARITY_EVEN #set parity check: no parity
