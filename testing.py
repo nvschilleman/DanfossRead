@@ -8,7 +8,7 @@ import time
 
 import crc16
 import struct
-import paho.mqtt.client as mqtt
+#import paho.mqtt.client as mqtt
 
 
 ser = serial.Serial('/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0', 9600, timeout=1, rtscts=False)
@@ -42,7 +42,7 @@ ser.readTimeout = 0.1
 
 
 def read_input_register(dev, reg):
-    command = chr(dev) + '\x04' + struct.pack('>H',reg) + '\x00\x01'
+    command = chr(dev) + '\x03' + struct.pack('>H',reg) + '\x00\x01'
     crc =  crc16.calcString(command, 0xFFFF)
     command = command + struct.pack('<H',crc) 
 
@@ -67,34 +67,29 @@ def read_input_register(dev, reg):
   
 def main():
 
-    mqttc = mqtt.Client()
+#    mqttc = mqtt.Client()
 
-    mqttc.connect("localhost")
-    mqttc.loop_start()
+#    mqttc.connect("localhost")
+#    mqttc.loop_start()
 
  #   while True:
-
-    response = read_input_register(1, 2575)
-
-    if response:    
-        print ":".join("{:02x}".format(ord(c)) for c in response)
     
-        temperature = ord(response[4:5])/10.0
-        print 'Temperature: ' + str(temperature)
-        mqttc.publish("ekc2021/temperature", temperature) 
-    else:
-        print "No data for EKC module at address 1"
- 
-    response = read_input_register(2, 2575)
+    bits = [535, 538, 923, 924, 926, 1012, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026]
     
-    if response: 
-        temperature = ord(response[4:5])/10.0
-        print 'Temperature: ' + str(temperature)
-        mqttc.publish("ekc2022/temperature", temperature)
+    for bit in bits:       
+
+        response = read_input_register(1, bit)
+        if response:    
+            print ":".join("{:02x}".format(ord(c)) for c in response)
+    
+            val = ord(response[4:5])/10.0
+        print 'Value: ' + str(val)
+      #  mqttc.publish("ekc2021/temperature", temperature) 
     else:
-        print "No data for EKC module at address 2"
+        print "No data"
  
-#        time.sleep(2)
+
+
 
 if __name__ == '__main__':
     main()
